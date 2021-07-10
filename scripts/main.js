@@ -1,6 +1,7 @@
 class CardEngine {
   constructor() {
     this.deck = [];
+    this.img = [];
     this.cardTypes = ["heart", "spades", "diamonds", "club"];
     this.Player1Cards = [];
     this.Player2Cards = [];
@@ -16,30 +17,37 @@ class CardEngine {
 
     player1.addEventListener("click", this.OnMove1ToGround);
     player2.addEventListener("click", this.OnMove2ToGround);
-
+    card.addImgs();
     card.BuildDeck();
     card.ShuffleDeck();
     card.Deal();
     card.showCards();
     card.CheckWin();
   };
-
-  BuildDeck = () => {
-    let img = document.querySelectorAll("[data-num]");
-    let k = 0;
+  addImgs = () => {
+    let imgs = document.querySelector(".img-all");
+    let img = "";
+    let cardTypeSymbol = ["H", "S", "D", "C"];
     for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 13; j++) {
-        let card = {
-          type: this.cardTypes[i],
-          number: j + 1,
-          img: img[k],
-        };
-        this.deck.push(card);
-        if (k < 51) {
-          k++;
-        }
-      } //2for
+      for (let j = 1; j <= 13; j++) {
+        img += `
+        <img width="0" src="./img/${j}${cardTypeSymbol[i]}.png" class="image-${j}${cardTypeSymbol[i]} " data-type="${this.cardTypes[i]}" data-num="${j}"/>
+        `;
+      }
+    }
+    imgs.innerHTML = img;
+  };
+  BuildDeck = () => {
+    this.img = document.querySelectorAll("[data-num]");
+    for (let i = 0; i < 52; i++) {
+      let card = {
+        type: this.img[i].dataset.type,
+        number: Number(this.img[i].dataset.num),
+        img: this.img[i],
+      };
+      this.deck.push(card);
     } //1for
+    console.table(this.deck);
   }; //BuildDeck End
 
   ShuffleDeck = () => {
@@ -66,33 +74,34 @@ class CardEngine {
     // debugger;
     if (!this.turn1) {
       this.Result.innerHTML = "it's not your turn";
-    } else {
-      let ground = document.querySelector(".GroundSection");
-      this.turn2 = true;
-      this.Result.innerHTML = "";
-      let lastCardP1 = this.Player1Cards.pop();
-      let lastCardP2 = null;
-      this.GroundCards.push(lastCardP1);
-      ground.appendChild(lastCardP1.img);
-      lastCardP1.img.classList.add("displayCard1");
-      this.compareAndFillGround(lastCardP1, lastCardP2);
+      return;
     }
+    let ground = document.querySelector(".GroundSection");
+    this.turn2 = true;
+    this.Result.innerHTML = "";
+    let lastCardP1 = this.Player1Cards.pop();
+    let lastCardP2 = null;
+    this.GroundCards.push(lastCardP1);
+    ground.appendChild(lastCardP1.img);
+    lastCardP1.img.classList.add("displayCard1");
+    this.compareAndFillGround(lastCardP1, lastCardP2);
   };
+
   OnMove2ToGround = () => {
     // debugger;
     if (!this.turn2) {
       this.Result.innerHTML = "it's not your turn";
-    } else {
-      let ground = document.querySelector(".GroundSection");
-      this.turn1 = true;
-      this.Result.innerHTML = "";
-      let lastCardP1 = null;
-      let lastCardP2 = this.Player2Cards.pop();
-      this.GroundCards.push(lastCardP2);
-      ground.appendChild(lastCardP2.img);
-      lastCardP2.img.classList.add("displayCard2");
-      this.compareAndFillGround(lastCardP1, lastCardP2);
+      return;
     }
+    let ground = document.querySelector(".GroundSection");
+    this.turn1 = true;
+    this.Result.innerHTML = "";
+    let lastCardP1 = null;
+    let lastCardP2 = this.Player2Cards.pop();
+    this.GroundCards.push(lastCardP2);
+    ground.appendChild(lastCardP2.img);
+    lastCardP2.img.classList.add("displayCard2");
+    this.compareAndFillGround(lastCardP1, lastCardP2);
   };
   compareAndFillGround = (lastCardP1, lastCardP2) => {
     if (lastCardP1 !== null) {
