@@ -3,6 +3,7 @@
   margin: 0;
   box-sizing: border-box;
 }
+
 .main {
   display: flex;
   position: relative;
@@ -63,9 +64,7 @@
   background-color: red;
   border: none;
 }
-.footer {
-  margin-top: 15px;
-}
+
 @media only screen and (max-width: 600px) {
   .main {
     top: 70px;

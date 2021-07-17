@@ -26,33 +26,38 @@ class CardEngine {
   };
   addImgs = () => {
     let imgs = document.querySelector(".img-all");
-    let img = "";
     let cardTypeSymbol = ["H", "S", "D", "C"];
     for (let i = 0; i < 4; i++) {
       for (let j = 1; j <= 13; j++) {
-        img += `
-        <img width="0" src="./img/${j}${cardTypeSymbol[i]}.png" class="image-${j}${cardTypeSymbol[i]} " data-type="${this.cardTypes[i]}" data-num="${j}"/>
+        this.img += `
+        <img width="0" src="./img/${j}${cardTypeSymbol[i]}.png" 
+        class="image-${j}${cardTypeSymbol[i]} " data-num="${j}"
+        data-type="${this.cardTypes[i]}" />
         `;
       }
     }
-    imgs.innerHTML = img;
+    imgs.innerHTML = this.img;
   };
   BuildDeck = () => {
-    this.img = document.querySelectorAll("[data-num]");
-    for (let i = 0; i < 52; i++) {
-      let card = {
-        type: this.img[i].dataset.type,
-        number: Number(this.img[i].dataset.num),
-        img: this.img[i],
-      };
-      this.deck.push(card);
+    for (let i = 0; i < 4; i++) {
+      for (let j = 1; j <= 13; j++) {
+        this.img = document.querySelector(
+          `img[data-num='${j}'][data-type='${this.cardTypes[i]}']`
+        );
+        let card = {
+          type: this.img.dataset.type,
+          number: Number(this.img.dataset.num),
+          img: this.img,
+        };
+        this.deck.push(card);
+      }
     } //1for
     console.table(this.deck);
   }; //BuildDeck End
 
   ShuffleDeck = () => {
     for (let i = 0; i < this.deck.length; i++) {
-      let randNum = Math.floor(Math.random() * 52);
+      let randNum = Math.floor(Math.random() * 48);
       let Deck = this.deck[i];
       this.deck[i] = this.deck[randNum];
       this.deck[randNum] = Deck;
