@@ -5,8 +5,7 @@ class CardEngine {
     this.Player2Cards = [];
     this.GroundCards = [];
     this.Result = null;
-    this.turn1 = true;
-    this.turn2 = true;
+    this.turn = 1;
     this.lastPlayerCard = [];
   }
   init = (e) => {
@@ -47,22 +46,22 @@ class CardEngine {
     this.Player2Cards = this.deck.slice(this.deck.length / 2);
   };
   OnSetPlayer1Turn = () => {
-    if (!this.turn1) {
-      this.Result.innerHTML = "it's not your turn";
+    if (this.turn == 1) {
+      this.Result.innerHTML = "";
+      this.shiftPlayerCardToGround(this.Player1Cards);
+      this.turn = 2;
       return;
     }
-    this.turn1 = false;
-    this.Result.innerHTML = "";
-    this.shiftPlayerCardToGround(this.Player1Cards);
+    this.Result.innerHTML = "it's not your turn";
   };
   OnSetPlayer2Turn = () => {
-    if (!this.turn2) {
-      this.Result.innerHTML = "it's not your turn";
+    if (this.turn == 2) {
+      this.Result.innerHTML = "";
+      this.shiftPlayerCardToGround(this.Player2Cards);
+      this.turn = 1;
       return;
     }
-    this.turn2 = false;
-    this.Result.innerHTML = "";
-    this.shiftPlayerCardToGround(this.Player2Cards);
+    this.Result.innerHTML = "it's not your turn";
   };
   shiftPlayerCardToGround = (PlayerCards) => {
     this.lastPlayerCard = PlayerCards.pop();
@@ -71,12 +70,9 @@ class CardEngine {
     this.FillGround(PlayerCards);
     this.CountCardsNumber();
     this.CheckWin();
+    this.turn = true;
   };
-  showImg = () => {
-    let img = document.querySelector(".card-img"); //line 21 in html
-    img.classList.add("displayCard");
-    img.src = `./img/${this.lastPlayerCard.type}${this.lastPlayerCard.number}.png`;
-  };
+
   FillGround = (PlayerCards) => {
     if (this.GroundCards.length > 1) {
       let lastCard = this.GroundCards[this.GroundCards.length - 2];
@@ -85,6 +81,11 @@ class CardEngine {
         this.GroundCards = [];
       }
     }
+  };
+  showImg = () => {
+    let img = document.querySelector(".card-img"); //line 21 in html
+    img.classList.add("displayCard");
+    img.src = `./img/${this.lastPlayerCard.type}${this.lastPlayerCard.number}.png`;
   };
   CountCardsNumber = () => {
     let cardNumPlayer1 = document.querySelector(".cardNumPlayer1");
