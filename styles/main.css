@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-.main {
+.container {
   display: flex;
   position: relative;
   justify-content: space-around;
@@ -30,25 +30,12 @@
   position: relative;
   z-index: 1;
 }
-.p1-img {
-  position: absolute;
-  left: 38%;
-  top: 18%;
-}
-.p2-img {
-  position: absolute;
-  right: 45%;
-  top: 18%;
-}
-.displayCard1 {
-  transform: rotate(-8deg);
+
+.displayCard {
   width: 150px;
+  left: -25px;
 }
-.displayCard2 {
-  transform: rotate(8deg);
-  width: 150px;
-}
-.cardNumP1 {
+.cardNumPlayer1 {
   font-size: 25px;
   font-weight: 700;
   margin: 10px 20%;
@@ -56,60 +43,11 @@
   background-color: red;
   border: none;
 }
-.cardNumP2 {
+.cardNumPlayer2 {
   font-size: 25px;
   font-weight: 700;
   margin: 0 20% 20px;
   padding: 10px 40px;
   background-color: red;
   border: none;
-}
-
-@media only screen and (max-width: 600px) {
-  .main {
-    top: 70px;
-    margin: 0 60px;
-  }
-
-  .playerTitle {
-    font-size: 20px;
-    margin: 50px 50px;
-    padding: 0 20px;
-  }
-  .groundTitle {
-    font-size: 20px;
-    margin: 5px 20px;
-  }
-  .theResult {
-    font-size: 26px;
-  }
-  .player1Img,
-  .player2Img {
-    width: 100px;
-    left: 25%;
-  }
-  .p1-img {
-    left: 38%;
-    top: 30%;
-  }
-  .p2-img {
-    right: 35%;
-    top: 30%;
-  }
-  .displayCard1 {
-    width: 60px;
-  }
-  .displayCard2 {
-    width: 60px;
-  }
-  .cardNumP1 {
-    font-size: 15px;
-    margin: 10px 30%;
-    padding: 10px 20px;
-  }
-  .cardNumP2 {
-    font-size: 15px;
-    margin: 10px 35%;
-    padding: 10px 20px;
-  }
 }

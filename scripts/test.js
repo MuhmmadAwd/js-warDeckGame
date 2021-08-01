@@ -7,7 +7,6 @@ class CardEngine {
     this.Result = null;
     this.turn1 = true;
     this.turn2 = true;
-    this.lastPlayerCard = [];
   }
   init = (e) => {
     let player1 = document.querySelector(".player1Img");
@@ -51,37 +50,55 @@ class CardEngine {
       this.Result.innerHTML = "it's not your turn";
       return;
     }
+    this.turn2 = true;
     this.turn1 = false;
     this.Result.innerHTML = "";
-    this.shiftPlayerCardToGround(this.Player1Cards);
+    this.shiftPlayer1CardToGround();
+  };
+  shiftPlayer1CardToGround = () => {
+    let lastCardPlayer1 = this.Player1Cards.pop();
+    this.GroundCards.push(lastCardPlayer1);
+    this.showImg(this.Player1Cards);
+    this.FillGround(this.Player1Cards);
+    this.CountCardsNumber();
+    this.CheckWin();
   };
   OnSetPlayer2Turn = () => {
     if (!this.turn2) {
       this.Result.innerHTML = "it's not your turn";
       return;
     }
+    this.turn1 = true;
     this.turn2 = false;
     this.Result.innerHTML = "";
-    this.shiftPlayerCardToGround(this.Player2Cards);
+    this.shiftPlayer2CardToGround();
   };
-  shiftPlayerCardToGround = (PlayerCards) => {
-    this.lastPlayerCard = PlayerCards.pop();
-    this.GroundCards.push(this.lastPlayerCard);
-    this.showImg();
-    this.FillGround(PlayerCards);
+  shiftPlayer2CardToGround = () => {
+    let lastCardPlayer2 = this.Player2Cards.pop();
+    this.GroundCards.push(lastCardPlayer2);
+    this.showImg(this.Player2Cards);
+    this.FillGround(this.Player2Cards);
     this.CountCardsNumber();
     this.CheckWin();
   };
-  showImg = () => {
+  showImg = (PlayerCards) => {
+    console.log(PlayerCards);
     let img = document.querySelector(".card-img"); //line 21 in html
     img.classList.add("displayCard");
-    img.src = `./img/${this.lastPlayerCard.type}${this.lastPlayerCard.number}.png`;
+    let PlayerCard = PlayerCards.pop();
+    img.src = `./img/${PlayerCard.type}${PlayerCard.number}.png`;
   };
   FillGround = (PlayerCards) => {
+    let PlayerCard = PlayerCards.pop();
+
     if (this.GroundCards.length > 1) {
       let lastCard = this.GroundCards[this.GroundCards.length - 2];
-      if (lastCard.number === this.lastPlayerCard.number) {
-        this.Player1Cards = PlayerCards.concat(this.GroundCards);
+
+      if (lastCard.number === PlayerCard.number) {
+        this.Player1Cards = this.Player1Cards.concat(this.GroundCards);
+        this.GroundCards = [];
+      } else if (lastCard.number === PlayerCard.number) {
+        this.Player2Cards = this.Player2Cards.concat(this.GroundCards);
         this.GroundCards = [];
       }
     }
