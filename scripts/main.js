@@ -1,23 +1,28 @@
 class CardEngine {
   constructor() {
+    this.player1 = null;
+    this.player2 = null;
     this.deck = [];
     this.Player1Cards = [];
     this.Player2Cards = [];
     this.GroundCards = [];
-    this.Result = null;
+    this.img = null;
+    this.ResultEL = null;
     this.turn = true;
+    this.cardNumPlayer1 = null;
+    this.cardNumPlayer2 = null;
   }
   init = (e) => {
-    let player1 = document.querySelector(".player1Img");
-    let player2 = document.querySelector(".player2Img");
-    this.Result = document.querySelector(".theResult");
-    player1.addEventListener("click", this.OnSetPlayer1Turn);
-    player2.addEventListener("click", this.OnSetPlayer2Turn);
+    this.player1 = document.querySelector(".player1Img");
+    this.player2 = document.querySelector(".player2Img");
+    this.img = document.querySelector(".card-img"); //line 21 in html
+    this.ResultEL = document.querySelector(".theResult");
+    this.player1.addEventListener("click", this.OnSetPlayer1Turn);
+    this.player2.addEventListener("click", this.OnSetPlayer2Turn);
     card.BuildDeck();
     card.ShuffleDeck();
     card.Deal();
   };
-
   BuildDeck = () => {
     // debugger
     let cardTypes = ["heart", "spades", "diamonds", "club"];
@@ -46,71 +51,90 @@ class CardEngine {
   };
   OnSetPlayer1Turn = () => {
     if (this.turn !== true) {
-      this.Result.innerHTML = "it's not your turn";
+      this.playMessage("it's not your turn");
       return;
     }
-    this.Result.innerHTML = "";
     this.shiftPlayerCardToGround(this.Player1Cards);
     this.turn = false;
   };
   OnSetPlayer2Turn = () => {
     if (this.turn !== false) {
-      this.Result.innerHTML = "it's not your turn";
+      this.playMessage("it's not your turn");
       return;
     }
-    this.Result.innerHTML = "";
     this.shiftPlayerCardToGround(this.Player2Cards);
     this.turn = true;
   };
   shiftPlayerCardToGround = (PlayerCards) => {
+    this.playMessage("");
     let lastPlayerCard = PlayerCards.pop();
     this.GroundCards.push(lastPlayerCard);
     this.showImg(lastPlayerCard);
     this.FillGround(lastPlayerCard, PlayerCards);
-    this.CountCardsNumber();
-    this.CheckWin();
+    this.ShowCardsCounts();
+    this.CheckWin(PlayerCards);
   };
 
   showImg = (lastPlayerCard) => {
-    let img = document.querySelector(".card-img"); //line 21 in html
-    img.classList.add("displayCard");
-    img.src = `./img/${lastPlayerCard.type}${lastPlayerCard.number}.png`;
+    this.img.src = `./img/${lastPlayerCard.type}${lastPlayerCard.number}.png`;
   };
 
   FillGround = (lastPlayerCard, PlayerCards) => {
-    if (this.GroundCards.length < 1) {
+    if (this.GroundCards.length == 1) {
       return;
     }
     let lastCard = this.GroundCards[this.GroundCards.length - 2];
-    if (lastCard.number !== lastPlayerCard.number) {
-      return;
+    console.log("x");
+    if (lastCard.number === lastPlayerCard.number) {
+      PlayerCards = PlayerCards.concat(this.GroundCards);
+      this.GroundCards = [];
+      this.img.src = `./img/x.png`;
     }
-    this.Player1Cards = PlayerCards.concat(this.GroundCards);
-    this.GroundCards = [];
   };
-  CountCardsNumber = () => {
-    let cardNumPlayer1 = document.querySelector(".cardNumPlayer1");
-    let cardNumPlayer2 = document.querySelector(".cardNumPlayer2");
-    cardNumPlayer1.innerHTML = this.Player1Cards.length;
-    cardNumPlayer2.innerHTML = this.Player2Cards.length;
-  };
-  CheckWin = () => {
-    if (this.Player2Cards.length > 0) {
-      return;
-    }
-    this.singForWinner();
 
-    if (this.Player1Cards.length > 0) {
+  ShowCardsCounts = () => {
+    this.cardNumPlayer1 = document.querySelector(".cardNumPlayer1");
+    this.cardNumPlayer2 = document.querySelector(".cardNumPlayer2");
+    this.cardNumPlayer1.innerHTML = this.Player1Cards.length;
+    this.cardNumPlayer2.innerHTML = this.Player2Cards.length;
+  };
+  CheckWin = (PlayerCards) => {
+    if (PlayerCards.length > 1) {
       return;
     }
     this.singForWinner();
+    this.disable();
+    let replayBtn = document.getElementsByClassName("replayBtn");
+    replayBtn.addEventListener("click", this.replayTheGame);
   };
   singForWinner = () => {
-    this.Result.innerHTML = " مليون مبروك ";
+    this.playMessage(" مليون مبروك ");
     let myAudioElement = new Audio("./win.mp3");
     myAudioElement.addEventListener("canplaythrough", (e) => {
       myAudioElement.play();
     });
+  };
+  disable = () => {
+    this.player1.removeEventListener("click", this.OnSetPlayer1Turn);
+    this.player2.removeEventListener("click", this.OnSetPlayer2Turn);
+  };
+  replayTheGame = () => {
+    this.img.src = `./img/x.png`;
+    this.playMessage("");
+    this.cardNumPlayer1.innerHTML = 26;
+    this.cardNumPlayer2.innerHTML = 26;
+    this.player1 = null;
+    this.player2 = null;
+    this.deck = [];
+    this.Player1Cards = [];
+    this.Player2Cards = [];
+    this.GroundCards = [];
+    this.img = null;
+    this.ResultEL = null;
+    this.turn = true;
+  };
+  playMessage = (massage) => {
+    this.ResultEL.innerHTML = massage;
   };
 } //CardEngine End
 let card = new CardEngine();
