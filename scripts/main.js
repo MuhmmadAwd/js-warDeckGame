@@ -11,8 +11,9 @@ class CardEngine {
     this.turn = true;
     this.cardNumPlayer1EL = null;
     this.cardNumPlayer2EL = null;
+    this.disable = false;
   }
-  init = (e) => {
+  init = () => {
     this.player1EL = document.querySelector(".player1Img");
     this.player2EL = document.querySelector(".player2Img");
     this.imgEL = document.querySelector(".card-img"); //line 21 in html
@@ -70,6 +71,9 @@ class CardEngine {
     this.turn = true;
   };
   shiftPlayerCardToGround = (PlayerCards) => {
+    if (this.disable) {
+      return;
+    }
     this.displayMessage("");
     let lastPlayerCard = PlayerCards.pop();
     this.GroundCards.push(lastPlayerCard);
@@ -101,33 +105,28 @@ class CardEngine {
     this.cardNumPlayer2EL.innerHTML = this.Player2Cards.length;
   };
   CheckWin = (PlayerCards) => {
-    if (PlayerCards.length > 20) {
+    if (PlayerCards.length > 22) {
       return;
     }
     this.singForWinner();
-    this.disable();
+    this.disable = true;
   };
   singForWinner = () => {
     this.displayMessage(" مليون مبروك ");
     let myAudioElement = new Audio("./win.mp3");
-    myAudioElement.addEventListener("canplaythrough", this.onPlayAudio);
-  };
-  onPlayAudio = () => {
-    myAudioElement.play();
-  };
-  disable = () => {
-    this.player1EL.removeEventListener("click", this.OnSetPlayer1Turn);
-    this.player2EL.removeEventListener("click", this.OnSetPlayer2Turn);
+    myAudioElement.addEventListener("canplaythrough", () => {
+      myAudioElement.play();
+    });
   };
   replayTheGame = () => {
     this.imgEL.src = `./img/x.png`;
     this.displayMessage("");
-    this.deck = [];
-    this.player1EL.addEventListener("click", this.OnSetPlayer1Turn);
-    this.player2EL.addEventListener("click", this.OnSetPlayer2Turn);
-    this.BuildDeck();
-    this.ShuffleDeck();
+    this.disable = false;
+    this.Player1Cards = [];
+    this.Player2Cards = [];
+    this.GroundCards = [];
     this.Deal();
+    this.ShowCardsCounts();
   };
   displayMessage = (massage) => {
     this.ResultEL.innerHTML = massage;
