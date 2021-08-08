@@ -1,27 +1,31 @@
 class CardEngine {
   constructor() {
-    this.player1 = null;
-    this.player2 = null;
+    this.player1EL = null;
+    this.player2EL = null;
     this.deck = [];
     this.Player1Cards = [];
     this.Player2Cards = [];
     this.GroundCards = [];
-    this.img = null;
+    this.imgEL = null;
     this.ResultEL = null;
     this.turn = true;
-    this.cardNumPlayer1 = null;
-    this.cardNumPlayer2 = null;
+    this.cardNumPlayer1EL = null;
+    this.cardNumPlayer2EL = null;
   }
   init = (e) => {
-    this.player1 = document.querySelector(".player1Img");
-    this.player2 = document.querySelector(".player2Img");
-    this.img = document.querySelector(".card-img"); //line 21 in html
+    this.player1EL = document.querySelector(".player1Img");
+    this.player2EL = document.querySelector(".player2Img");
+    this.imgEL = document.querySelector(".card-img"); //line 21 in html
     this.ResultEL = document.querySelector(".theResult");
-    this.player1.addEventListener("click", this.OnSetPlayer1Turn);
-    this.player2.addEventListener("click", this.OnSetPlayer2Turn);
-    card.BuildDeck();
-    card.ShuffleDeck();
-    card.Deal();
+    this.cardNumPlayer1EL = document.querySelector(".cardNumPlayer1");
+    this.cardNumPlayer2EL = document.querySelector(".cardNumPlayer2");
+    let replayBtn = document.querySelector(".replayBtn");
+    replayBtn.addEventListener("click", this.replayTheGame);
+    this.player1EL.addEventListener("click", this.OnSetPlayer1Turn);
+    this.player2EL.addEventListener("click", this.OnSetPlayer2Turn);
+    this.BuildDeck();
+    this.ShuffleDeck();
+    this.Deal();
   };
   BuildDeck = () => {
     // debugger
@@ -51,7 +55,7 @@ class CardEngine {
   };
   OnSetPlayer1Turn = () => {
     if (this.turn !== true) {
-      this.playMessage("it's not your turn");
+      this.displayMessage("it's not your turn");
       return;
     }
     this.shiftPlayerCardToGround(this.Player1Cards);
@@ -59,14 +63,14 @@ class CardEngine {
   };
   OnSetPlayer2Turn = () => {
     if (this.turn !== false) {
-      this.playMessage("it's not your turn");
+      this.displayMessage("it's not your turn");
       return;
     }
     this.shiftPlayerCardToGround(this.Player2Cards);
     this.turn = true;
   };
   shiftPlayerCardToGround = (PlayerCards) => {
-    this.playMessage("");
+    this.displayMessage("");
     let lastPlayerCard = PlayerCards.pop();
     this.GroundCards.push(lastPlayerCard);
     this.showImg(lastPlayerCard);
@@ -76,7 +80,7 @@ class CardEngine {
   };
 
   showImg = (lastPlayerCard) => {
-    this.img.src = `./img/${lastPlayerCard.type}${lastPlayerCard.number}.png`;
+    this.imgEL.src = `./img/${lastPlayerCard.type}${lastPlayerCard.number}.png`;
   };
 
   FillGround = (lastPlayerCard, PlayerCards) => {
@@ -84,56 +88,48 @@ class CardEngine {
       return;
     }
     let lastCard = this.GroundCards[this.GroundCards.length - 2];
-    console.log("x");
     if (lastCard.number === lastPlayerCard.number) {
       PlayerCards = PlayerCards.concat(this.GroundCards);
       this.GroundCards = [];
-      this.img.src = `./img/x.png`;
+      this.imgEL.src = `./img/x.png`;
+      return PlayerCards;
     }
   };
 
   ShowCardsCounts = () => {
-    this.cardNumPlayer1 = document.querySelector(".cardNumPlayer1");
-    this.cardNumPlayer2 = document.querySelector(".cardNumPlayer2");
-    this.cardNumPlayer1.innerHTML = this.Player1Cards.length;
-    this.cardNumPlayer2.innerHTML = this.Player2Cards.length;
+    this.cardNumPlayer1EL.innerHTML = this.Player1Cards.length;
+    this.cardNumPlayer2EL.innerHTML = this.Player2Cards.length;
   };
   CheckWin = (PlayerCards) => {
-    if (PlayerCards.length > 1) {
+    if (PlayerCards.length > 20) {
       return;
     }
     this.singForWinner();
     this.disable();
-    let replayBtn = document.getElementsByClassName("replayBtn");
-    replayBtn.addEventListener("click", this.replayTheGame);
   };
   singForWinner = () => {
-    this.playMessage(" مليون مبروك ");
+    this.displayMessage(" مليون مبروك ");
     let myAudioElement = new Audio("./win.mp3");
-    myAudioElement.addEventListener("canplaythrough", (e) => {
-      myAudioElement.play();
-    });
+    myAudioElement.addEventListener("canplaythrough", this.onPlayAudio);
+  };
+  onPlayAudio = () => {
+    myAudioElement.play();
   };
   disable = () => {
-    this.player1.removeEventListener("click", this.OnSetPlayer1Turn);
-    this.player2.removeEventListener("click", this.OnSetPlayer2Turn);
+    this.player1EL.removeEventListener("click", this.OnSetPlayer1Turn);
+    this.player2EL.removeEventListener("click", this.OnSetPlayer2Turn);
   };
   replayTheGame = () => {
-    this.img.src = `./img/x.png`;
-    this.playMessage("");
-    this.cardNumPlayer1.innerHTML = 26;
-    this.cardNumPlayer2.innerHTML = 26;
-    this.player1 = null;
-    this.player2 = null;
+    this.imgEL.src = `./img/x.png`;
+    this.displayMessage("");
     this.deck = [];
-    this.Player1Cards = [];
-    this.Player2Cards = [];
-    this.GroundCards = [];
-    this.img = null;
-    this.ResultEL = null;
-    this.turn = true;
+    this.player1EL.addEventListener("click", this.OnSetPlayer1Turn);
+    this.player2EL.addEventListener("click", this.OnSetPlayer2Turn);
+    this.BuildDeck();
+    this.ShuffleDeck();
+    this.Deal();
   };
-  playMessage = (massage) => {
+  displayMessage = (massage) => {
     this.ResultEL.innerHTML = massage;
   };
 } //CardEngine End
