@@ -14,22 +14,19 @@ class CardEngine {
     this.disable = false;
   }
   init = () => {
-    this.player1EL = document.querySelector(".player1Img");
-    this.player2EL = document.querySelector(".player2Img");
     this.imgEL = document.querySelector(".card-img"); //line 21 in html
     this.ResultEL = document.querySelector(".theResult");
-    this.cardNumPlayer1EL = document.querySelector(".cardNumPlayer1");
-    this.cardNumPlayer2EL = document.querySelector(".cardNumPlayer2");
-    let replayBtn = document.querySelector(".replayBtn");
-    replayBtn.addEventListener("click", this.replayTheGame);
+    this.player1EL = document.querySelector(".player1Img");
+    this.player2EL = document.querySelector(".player2Img");
     this.player1EL.addEventListener("click", this.OnSetPlayer1Turn);
     this.player2EL.addEventListener("click", this.OnSetPlayer2Turn);
+    let replayEL = document.querySelector(".replayBtn");
+    replayEL.addEventListener("click", this.replayTheGame);
     this.BuildDeck();
     this.ShuffleDeck();
     this.Deal();
   };
   BuildDeck = () => {
-    // debugger
     let cardTypes = ["heart", "spades", "diamonds", "club"];
     for (let i = 0; i < 4; i++) {
       for (let j = 1; j <= 13; j++) {
@@ -51,6 +48,8 @@ class CardEngine {
     }
   };
   Deal = () => {
+    this.Player1Cards = [];
+    this.Player2Cards = [];
     this.Player1Cards = this.deck.slice(0, this.deck.length / 2);
     this.Player2Cards = this.deck.slice(this.deck.length / 2);
   };
@@ -78,7 +77,7 @@ class CardEngine {
     let lastPlayerCard = PlayerCards.pop();
     this.GroundCards.push(lastPlayerCard);
     this.showImg(lastPlayerCard);
-    this.FillGround(lastPlayerCard, PlayerCards);
+    this.checkPlayerCardAndEmptyGround(lastPlayerCard, PlayerCards);
     this.ShowCardsCounts();
     this.CheckWin(PlayerCards);
   };
@@ -87,7 +86,7 @@ class CardEngine {
     this.imgEL.src = `./img/${lastPlayerCard.type}${lastPlayerCard.number}.png`;
   };
 
-  FillGround = (lastPlayerCard, PlayerCards) => {
+  checkPlayerCardAndEmptyGround = (lastPlayerCard, PlayerCards) => {
     if (this.GroundCards.length == 1) {
       return;
     }
@@ -96,34 +95,27 @@ class CardEngine {
       PlayerCards = PlayerCards.concat(this.GroundCards);
       this.GroundCards = [];
       this.imgEL.src = `./img/x.png`;
-      return PlayerCards;
     }
   };
 
   ShowCardsCounts = () => {
-    this.cardNumPlayer1EL.innerHTML = this.Player1Cards.length;
-    this.cardNumPlayer2EL.innerHTML = this.Player2Cards.length;
+    let cardNumPlayer1EL = document.querySelector(".cardNumPlayer1");
+    let cardNumPlayer2EL = document.querySelector(".cardNumPlayer2");
+    cardNumPlayer1EL.innerHTML = this.Player1Cards.length;
+    cardNumPlayer2EL.innerHTML = this.Player2Cards.length;
   };
   CheckWin = (PlayerCards) => {
     if (PlayerCards.length > 22) {
       return;
     }
-    this.singForWinner();
+    this.displayMessage(" مليون مبروك ");
     this.disable = true;
   };
-  singForWinner = () => {
-    this.displayMessage(" مليون مبروك ");
-    let myAudioElement = new Audio("./win.mp3");
-    myAudioElement.addEventListener("canplaythrough", () => {
-      myAudioElement.play();
-    });
-  };
+
   replayTheGame = () => {
     this.imgEL.src = `./img/x.png`;
     this.displayMessage("");
     this.disable = false;
-    this.Player1Cards = [];
-    this.Player2Cards = [];
     this.GroundCards = [];
     this.Deal();
     this.ShowCardsCounts();
